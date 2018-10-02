@@ -1,11 +1,11 @@
 const WebSocketServer = require('ws').Server;
 const http = require('http');
 const express = require('express');
-const url = require('url');
+const path = require('path')
 
 const app = express();
-app.use(express.static('public'))
-const port = 5000;
+app.use(express.static(path.join(__dirname, 'public')))
+const port = process.env.PORT || 5000;
 
 const server = http.createServer(app);
 server.listen(port, () => console.log(`http server listening on port ${port}`));

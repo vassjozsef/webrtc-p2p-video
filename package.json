@@ -5,12 +5,14 @@
     "type": "git",
     "url": "https://github.com/vassjozsef/webrtc-p2p-heroku.git"
   },
+  "license": "MIT",
   "dependencies": {
     "express": "^4.4.5",
     "ws": "0.4.x"
   },
   "engines": {
-    "node": "0.10.x"
+    "node": "8.11.3",
+    "yarn": "1.7.0"
   },
   "scripts": {
     "start": "node index.js"
