@@ -1,0 +1,18 @@
+{
+  "name": "webrtc-p2p-heroku",
+  "version": "0.0.1",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vassjozsef/webrtc-p2p-heroku.git"
+  },
+  "dependencies": {
+    "express": "^4.4.5",
+    "ws": "0.4.x"
+  },
+  "engines": {
+    "node": "0.10.x"
+  },
+  "scripts": {
+    "start": "node index.js"
+  }
+}
