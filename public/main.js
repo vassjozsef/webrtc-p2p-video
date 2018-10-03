@@ -202,7 +202,7 @@ function removeTransportCC(sdp) {
 
 function createOffer() {
   peerConnection.createOffer(offerOptions).then(offer => {
-    offer.sdp = removeTransportCC(offer.sdp);
+//    offer.sdp = removeTransportCC(offer.sdp);
     peerConnection.setLocalDescription(offer).then(() => {
       const message = `{"command": "INVITE", "to": "${peer}", "from": "${user}", "desc": ${JSON.stringify(offer)}}`;
       websocket.send(message);
