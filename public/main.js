@@ -187,8 +187,22 @@ function call() {
   });
 }
 
+function removeTransportCC(sdp) {
+  const sdpLines = sdp.split('\r\n');
+  const newSdpLines = []
+  sdpLines.forEach(line => {
+    console.info(line);
+    if (line.indexOf('transport-wide') === -1 && line.indexOf('transport-cc') === -1) {
+      newSdpLines.push(line);
+    } 
+  });
+  newSdp = newSdpLines.join('\r\n');
+  return newSdp;
+}
+
 function createOffer() {
   peerConnection.createOffer(offerOptions).then(offer => {
+    offer.sdp = removeTransportCC(offer.sdp);
     peerConnection.setLocalDescription(offer).then(() => {
       const message = `{"command": "INVITE", "to": "${peer}", "from": "${user}", "desc": ${JSON.stringify(offer)}}`;
       websocket.send(message);
