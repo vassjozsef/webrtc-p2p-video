@@ -30,11 +30,15 @@ wss.on('connection', ws => {
 
   ws.on('message', message => {
     const m = JSON.parse(message);
-    console.info(`${m.fom} => ${m.to}: ${m.command}`);
+    console.info(`${m.from} => ${m.to}: ${m.command}`);
     switch (m.command) {
       case 'REGISTER':
         users[m.from] = ws;
         console.info(`User connected: ${m.from}`);
+        break;
+      case 'PING':
+        const pong = `{"command": "PONG", "from": "${m.from}", "to": "${m.to}"}`;
+        ws.send(pong);
         break;
       case 'INVITE':
       case 'ANSWER':

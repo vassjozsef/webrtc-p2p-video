@@ -4,6 +4,8 @@ var peerConnection = null;
 var peer = null;
 var user = null;
 var cachedIceCandidates = [];
+var pingInterval = null;
+var statsInterval = null;
 
 const statisticsArea = document.getElementById('statisticsArea');
 const remoteVideo = document.getElementById('remoteVideo');
@@ -37,17 +39,23 @@ function connect() {
   websocket = new WebSocket(host);
   websocket.onopen = (open) => {
     status(`WebSocket opened: ${open.target.url}\n`);
-    const message = `{"command": "REGISTER", "from": "${user}"}`;
+    const message = `{"command": "REGISTER", "from": "${user}", "to": "${user}"}`;
     websocket.send(message);
+    pingInterval = setInterval(() => {
+      const message = `{"command": "PING", "from": "${user}", "to": "${user}"}`;
+      websocket.send(message);
+    }, 30 * 1000);
   };
 
   websocket.onerror = (error) => {
     status(`Websocket error ${error}\n`);
+    clearInterval(pingInterval);
     websocket = null;
   };
 
   websocket.onclose = (close) => {
     status('WebSocket closed\n');
+    clearInterval(pingInterval);
     websocket = null;
   };
 
@@ -87,10 +95,12 @@ function connect() {
          status(`Error adding ice candidate: ${error.toString()}\n`);
       });
     } else if (m.command === 'HANGUP') {
+      clearInterval(statsInterval);
       if (peerConnection != null) {
         peerConnection.close();
         peerConnection = null;
       }
+    } else if (m.command === 'PONG') {
     } else {
       status(`Received invalid command ${m.command}\n`);
     }
@@ -122,7 +132,7 @@ function createPeerConnection() {
     }
   }
 
-  setInterval(() => {
+  statsInterval = setInterval(() => {
     if (peerConnection) {
       peerConnection.getStats().then(stats => {
         stats.forEach(report => {
@@ -218,6 +228,7 @@ function hangup() {
   if (peerConnection != null) {
      const message = `{"command": "HANGUP", "to": "${peer}", "from": "${user}"}`;
      websocket.send(message);
+     clearInterval(statsInterval);
      peerConnection.close();
      peerConnection = null;
   }
